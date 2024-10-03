@@ -1,60 +1,63 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import "./db.js";
-import { AdminRouter } from "./routes/auth.js";
-import { studentRouter } from "./routes/student.js";
-import { bookRouter } from "./routes/book.js";
-import { Book } from "./models/Book.js";
-import { Student } from "./models/Student.js";
-import { Admin } from "./models/Admin.js";
+/**
+ * Export lib/mongoose
+ *
+ */
 
-dotenv.config();
+'use strict';
 
-const app = express();
-app.use(express.json());
+const mongoose = require('./lib/');
 
-// Define allowed origins from environment variable
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000', // Fallback to localhost if not defined
-];
+module.exports = mongoose;
+module.exports.default = mongoose;
+module.exports.mongoose = mongoose;
 
-console.log("Frontend URL:", process.env.FRONTEND_URL);
+// Re-export for ESM support
+module.exports.cast = mongoose.cast;
+module.exports.STATES = mongoose.STATES;
+module.exports.setDriver = mongoose.setDriver;
+module.exports.set = mongoose.set;
+module.exports.get = mongoose.get;
+module.exports.createConnection = mongoose.createConnection;
+module.exports.connect = mongoose.connect;
+module.exports.disconnect = mongoose.disconnect;
+module.exports.startSession = mongoose.startSession;
+module.exports.pluralize = mongoose.pluralize;
+module.exports.model = mongoose.model;
+module.exports.deleteModel = mongoose.deleteModel;
+module.exports.modelNames = mongoose.modelNames;
+module.exports.plugin = mongoose.plugin;
+module.exports.connections = mongoose.connections;
+module.exports.version = mongoose.version;
+module.exports.Mongoose = mongoose.Mongoose;
+module.exports.Schema = mongoose.Schema;
+module.exports.SchemaType = mongoose.SchemaType;
+module.exports.SchemaTypes = mongoose.SchemaTypes;
+module.exports.VirtualType = mongoose.VirtualType;
+module.exports.Types = mongoose.Types;
+module.exports.Query = mongoose.Query;
+module.exports.Model = mongoose.Model;
+module.exports.Document = mongoose.Document;
+module.exports.ObjectId = mongoose.ObjectId;
+module.exports.isValidObjectId = mongoose.isValidObjectId;
+module.exports.isObjectIdOrHexString = mongoose.isObjectIdOrHexString;
+module.exports.syncIndexes = mongoose.syncIndexes;
+module.exports.Decimal128 = mongoose.Decimal128;
+module.exports.Mixed = mongoose.Mixed;
+module.exports.Date = mongoose.Date;
+module.exports.Number = mongoose.Number;
+module.exports.Error = mongoose.Error;
+module.exports.MongooseError = mongoose.MongooseError;
+module.exports.now = mongoose.now;
+module.exports.CastError = mongoose.CastError;
+module.exports.SchemaTypeOptions = mongoose.SchemaTypeOptions;
+module.exports.mongo = mongoose.mongo;
+module.exports.mquery = mongoose.mquery;
+module.exports.sanitizeFilter = mongoose.sanitizeFilter;
+module.exports.trusted = mongoose.trusted;
+module.exports.skipMiddlewareFunction = mongoose.skipMiddlewareFunction;
+module.exports.overwriteMiddlewareResult = mongoose.overwriteMiddlewareResult;
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        console.error(`Blocked CORS request from origin: ${origin}`);
-        return callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
-
-app.use(cookieParser());
-app.use("/auth", AdminRouter);
-app.use("/student", studentRouter);
-app.use("/book", bookRouter);
-
-app.get("/dashboard", async (req, res) => {
-  try {
-    const student = await Student.countDocuments();
-    const admin = await Admin.countDocuments();
-    const book = await Book.countDocuments();
-    return res.json({ ok: true, students: student, books: book, admin: admin });
-  } catch (err) {
-    console.error("Error fetching dashboard data:", err);
-    return res.status(500).json({ ok: false, message: "Server error" });
-  }
-});
-
-app.listen(process.env.PORT || 3001, () => {
-  console.log(`Server is running on port ${process.env.PORT || 3001}`);
-});
+// The following properties are not exported using ESM because `setDriver()` can mutate these
+// module.exports.connection = mongoose.connection;
+// module.exports.Collection = mongoose.Collection;
+// module.exports.Connection = mongoose.Connection;
